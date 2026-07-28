@@ -18,7 +18,7 @@ export default async function DashboardPeriodPage() {
     <div className="max-w-xl space-y-4">
       <p className="text-sm text-[var(--text-muted)]">
         대시보드(홈)와 전체부서 현황의 집계 수치는 발행요청일 기준으로 이 기간 안의 제조기록서만
-        모아서 계산됩니다. "전체"를 선택하면 기간 제한 없이 전부 집계합니다.
+        모아서 계산됩니다. &ldquo;전체&rdquo;를 선택하면 기간 제한 없이 전부 집계합니다.
       </p>
 
       <form action={updateDashboardPeriod} className="surface-card space-y-4 rounded-2xl p-5">

@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 부서/팀 (Veeva-EDMS 마스터폼 관리 및 제조기록서 사용 부서)
+model Team {
+  id      String  @id
+  nameKo  String
+  nameEn  String
+  siteTag String? // "타 사이트" 구분용, 화순공장 본진은 null
+  order   Int     @default(0)
+
+  parts               Part[]
+  people              Person[]
+  users               User[]
+  records             BatchRecord[]
+  alertLogs           AlertLog[]
+  processDurationRules ProcessDurationRule[]
+}
+
+model Part {
+  id     String @id @default(cuid())
+  nameKo String
+  nameEn String
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+// 부서별 기한임박 메일을 받을 담당자
+model Person {
+  id     String  @id @default(cuid())
+  name   String
+  email  String
+  teamId String
+  team   Team    @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 로그인 계정 (관리자 / 일반 열람자 공용)
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  displayName  String
+  role         String // "admin" | "viewer"
+  teamId       String?
+  team         Team?    @relation(fields: [teamId], references: [id])
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  sessions   Session[]
+  accessLogs AccessLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// 제조기록서 발행요청 -> 발행 -> 배포 -> 작성완료 -> 반납 흐름 추적
+model BatchRecord {
+  id          String @id @default(cuid())
+  recordNo    String // 제조기록서 번호 (문서번호, Veeva)
+  productName String
+  batchNo     String // 제조번호 - 대시보드에서 마스킹 처리 대상
+  teamId      String
+  team        Team   @relation(fields: [teamId], references: [id])
+
+  // REQUESTED(발행요청) -> ISSUED(발행) -> DISTRIBUTED(배포) -> WRITE_COMPLETE(작성완료) -> RETURNED(반납완료)
+  status String @default("REQUESTED")
+
+  requestDate       DateTime? // G-net 전자결재 발행요청일
+  issueDate         DateTime? // QA Veeva-EDMS 발행일
+  distributeDate    DateTime? // 사용부서 배포일
+  processStartDate  DateTime? // 제조일자 (구 "공정개시일")
+  writeCompleteDate DateTime? // 공정완료일 — 제조일자 + ProcessDurationRule.offsetDays로 자동계산, 반납기한 기산일
+  dueDate           DateTime? // writeCompleteDate + 5일
+  returnDate        DateTime? // 실제 반납일
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accessLogs AccessLog[]
+}
+
+// 마스킹 해제 열람 로그 (본인인증 후 열람 시 기록)
+model AccessLog {
+  id         String      @id @default(cuid())
+  recordId   String
+  record     BatchRecord @relation(fields: [recordId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  accessedAt DateTime    @default(now())
+}
+
+// 문서번호별 "제조일자 -> 공정완료일" 소요일 등록표. QA뿐 아니라 제조부서 계정도 등록 가능.
+// offsetDays는 음수도 허용 (제조일자보다 앞서 공정이 완료되는 문서번호가 있을 수 있음).
+model ProcessDurationRule {
+  id            String   @id @default(cuid())
+  documentNo    String   @unique // 문서번호 (제조기록서 번호)
+  teamId        String // 이 문서번호를 쓰는 부서 — BR 정보등록 화면 팀별 탭 구분용
+  team          Team     @relation(fields: [teamId], references: [id])
+  productName   String // 이 문서번호에 해당하는 제품명 — BR 정보등록 시 문서번호로 자동조회
+  offsetDays    Int
+  updatedByName String // 마지막 수정자 표시 이름 (로그 목적)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// 문서번호별 공정소요일 등록/수정/삭제 이력 (append-only) — "누가 언제 무엇을 바꿨는지" 추적용.
+// ProcessDurationRule과 달리 규칙이 삭제돼도 이력은 남는다.
+model ProcessDurationRuleLog {
+  id            String   @id @default(cuid())
+  documentNo    String
+  action        String // "UPSERT" | "DELETE"
+  offsetDays    Int? // UPSERT일 때만 값 존재
+  changedByName String
+  changedAt     DateTime @default(now())
+}
+
+// 대시보드 집계 기간 설정 (싱글턴 1행). 발행요청일(requestDate) 기준으로 대시보드 집계 범위를 제한한다.
+model DashboardSettings {
+  id            String    @id @default("singleton")
+  periodType    String    @default("ALL") // ALL | THIS_MONTH | LAST_3_MONTHS | LAST_6_MONTHS | THIS_YEAR | CUSTOM
+  customStart   DateTime?
+  customEnd     DateTime?
+  updatedByName String?
+  updatedAt     DateTime  @updatedAt
+}
+
+// 기한임박/지연 알림 메일 발송 이력
+model AlertLog {
+  id         String   @id @default(cuid())
+  teamId     String
+  team       Team     @relation(fields: [teamId], references: [id])
+  sentBy     String // 발송한 관리자 표시 이름
+  recipients String // 콤마 구분 이메일 목록
+  recordIds  String // 콤마 구분 BatchRecord id 목록
+  sentAt     DateTime @default(now())
+}

@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+build
+*.log
+.env
+.env.local
+prisma/dev.db
+prisma/dev.db-journal
+tsconfig.tsbuildinfo
+.claude
+
+# 참고용으로만 두는 원본 폰트/이미지 에셋 (실제 사용본은 public/fonts, public/background.png)
+GCFont
+Pretendard Font
+/background.png

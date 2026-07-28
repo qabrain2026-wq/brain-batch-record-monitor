@@ -1,0 +1,67 @@
+{
+  "effectiveDate": "2025-01-03",
+  "site": "화순공장 (Hwasun Plant)",
+  "teams": [
+    {
+      "id": "flu",
+      "nameKo": "플루팀",
+      "nameEn": "Flu Bulk Manufacturing(HSP)팀",
+      "parts": [
+        { "nameKo": "배양1", "nameEn": "Flu up-stream 1" },
+        { "nameKo": "배양2", "nameEn": "Flu up-stream 2" },
+        { "nameKo": "정제", "nameEn": "Flu down-stream" },
+        { "nameKo": "공정개선", "nameEn": "Process Control & Innovation" },
+        { "nameKo": "한타", "nameEn": "Hanta" }
+      ]
+    },
+    {
+      "id": "vz-bulk",
+      "nameKo": "수두원액팀",
+      "nameEn": "VZ Bulk Manufacturing(HSP)팀",
+      "parts": [{ "nameKo": "수두원액", "nameEn": "VZ Bulk Manufacturing" }]
+    },
+    {
+      "id": "vz-filling",
+      "nameKo": "수두충전팀",
+      "nameEn": "VZ Filling(HSP)팀",
+      "parts": [{ "nameKo": "수두충전", "nameEn": "VZ Filling" }]
+    },
+    {
+      "id": "filling",
+      "nameKo": "충전팀",
+      "nameEn": "Filling(HSP)팀",
+      "parts": [
+        { "nameKo": "충전", "nameEn": "Filling(HSP)" },
+        { "nameKo": "조제", "nameEn": "Fomulation(HSP)" }
+      ]
+    },
+    {
+      "id": "packaging",
+      "nameKo": "포장팀",
+      "nameEn": "Packaging(HSP)팀",
+      "parts": [
+        { "nameKo": "포장", "nameEn": "Packaging(HSP)" },
+        { "nameKo": "검병", "nameEn": "Visual Inspection(HSP)" },
+        { "nameKo": "자재", "nameEn": "Material" }
+      ]
+    },
+    {
+      "id": "bacterial",
+      "nameKo": "세균백신팀",
+      "nameEn": "Bacterial Bulk Manufacturing(HSP)팀",
+      "parts": [
+        { "nameKo": "Td", "nameEn": "Td Bulk" },
+        { "nameKo": "탄저", "nameEn": "Anthrax Bulk" }
+      ]
+    },
+    {
+      "id": "tech-transfer",
+      "nameKo": "기술이전팀",
+      "nameEn": "Technology Transfer팀",
+      "parts": [
+        { "nameKo": "BPP", "nameEn": "Bio Pilot Plant" },
+        { "nameKo": "BCG", "nameEn": "BCG Vaccine" }
+      ]
+    }
+  ]
+}

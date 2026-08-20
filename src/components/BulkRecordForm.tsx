@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { DocumentNoInput } from "@/components/DocumentNoInput";
-import { toDocumentNo } from "@/lib/documentNo";
+import { normalizeDocumentNo } from "@/lib/documentNo";
 
 type TeamOption = { id: string; nameEn: string; nameKo: string };
 type RuleLookup = { documentNo: string; productName: string };
@@ -23,8 +23,8 @@ export function BulkRecordForm({
 
   const productByDocumentNo = new Map(rules.map((r) => [r.documentNo, r.productName]));
 
-  function handleSuffixChange(rowId: number, suffix: string) {
-    const documentNo = toDocumentNo(suffix);
+  function handleDocumentNoChange(rowId: number, value: string) {
+    const documentNo = normalizeDocumentNo(value);
     const match = documentNo ? productByDocumentNo.get(documentNo) : undefined;
     if (match) {
       setProductNames((prev) => ({ ...prev, [rowId]: match }));
@@ -74,9 +74,9 @@ export function BulkRecordForm({
                 </td>
                 <td className="px-3 py-2">
                   <DocumentNoInput
-                    name={`documentNoSuffix_${i}`}
+                    name={`documentNo_${i}`}
                     inputProps={{
-                      onChange: (e) => handleSuffixChange(rowId, e.target.value)
+                      onChange: (e) => handleDocumentNoChange(rowId, e.target.value)
                     }}
                   />
                 </td>

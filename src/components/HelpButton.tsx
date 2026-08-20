@@ -44,7 +44,7 @@ export default function HelpButton() {
 
           <p className="mt-3 font-semibold text-[var(--ink)]">공정소요일 등록</p>
           <ul className="mt-2 list-disc space-y-1.5 pl-4 text-[var(--ink-soft)]">
-            <li>문서번호(GC-BR-NNNNN)별로 제조일자 기준 공정소요일(±일수)을 등록해두면, 공정완료일이 자동 계산됩니다.</li>
+            <li>문서번호(Veeva 제조기록서 번호)별로 제조일자 기준 공정소요일(±일수)을 등록해두면, 공정완료일이 자동 계산됩니다.</li>
             <li>QA 계정뿐 아니라 제조부서 계정도 로그인만 하면 등록·수정할 수 있습니다.</li>
             <li>등록·수정 시 로그인한 사람 이름이 &ldquo;최근 수정자&rdquo;로 남습니다.</li>
           </ul>

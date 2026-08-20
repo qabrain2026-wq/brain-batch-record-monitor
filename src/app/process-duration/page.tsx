@@ -78,7 +78,7 @@ export default async function ProcessDurationPage({
         </label>
         <label className="flex flex-col gap-1">
           <span className="text-xs text-[var(--text-muted)]">문서번호</span>
-          <DocumentNoInput name="documentNoSuffix" inputProps={{ required: true }} />
+          <DocumentNoInput name="documentNo" inputProps={{ required: true }} />
         </label>
         <label className="flex flex-col gap-1">
           <span className="text-xs text-[var(--text-muted)]">제품명</span>

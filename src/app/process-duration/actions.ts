@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
-import { toDocumentNo } from "@/lib/documentNo";
+import { normalizeDocumentNo } from "@/lib/documentNo";
 
 async function assertLoggedIn() {
   const session = await getSession();
@@ -22,7 +22,7 @@ function addDays(base: Date, days: number) {
 // 배치기록이 있다면 공정완료일/반납기한을 즉시 재계산한다.
 export async function upsertProcessDurationRule(formData: FormData) {
   const session = await assertLoggedIn();
-  const documentNo = toDocumentNo(String(formData.get("documentNoSuffix") ?? ""));
+  const documentNo = normalizeDocumentNo(String(formData.get("documentNo") ?? ""));
   const teamId = String(formData.get("teamId") ?? "").trim();
   const productName = String(formData.get("productName") ?? "").trim();
   const offsetDaysRaw = String(formData.get("offsetDays") ?? "").trim();

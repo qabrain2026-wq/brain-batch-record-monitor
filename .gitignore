@@ -14,3 +14,11 @@ tsconfig.tsbuildinfo
 GCFont
 Pretendard Font
 /background.png
+
+# Local Netlify folder
+.netlify
+
+# 실제 Veeva-EDMS 발행내역 원본 (실명/제조번호 포함, 저장소에 올리지 않음)
+*.xlsx
+~$*
+scratch_*.json

@@ -7,7 +7,7 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
 import { getReturnUrgency } from "@/lib/dates";
 import { sendAlertMail, AlertRecordSummary } from "@/lib/mailer";
-import { toDocumentNo } from "@/lib/documentNo";
+import { normalizeDocumentNo } from "@/lib/documentNo";
 
 async function assertAdmin() {
   const admin = await requireAdmin();
@@ -188,7 +188,7 @@ export async function createRecordsBulk(formData: FormData) {
 
   for (let i = 0; i < rowCount; i++) {
     const teamId = str(formData, `teamId_${i}`);
-    const recordNo = toDocumentNo(str(formData, `documentNoSuffix_${i}`));
+    const recordNo = normalizeDocumentNo(str(formData, `documentNo_${i}`));
     const productName = str(formData, `productName_${i}`);
     const batchNo = str(formData, `batchNo_${i}`);
     const processStartDate = dateOrNull(formData, `processStartDate_${i}`);

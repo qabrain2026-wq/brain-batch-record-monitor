@@ -74,7 +74,7 @@ export function RecordForm({
           <input
             name="recordNo"
             required
-            placeholder="예: GC-BR-00011"
+            placeholder="예: CC-GC-BR-01772-7-0-0016"
             defaultValue={record?.recordNo}
             className="w-full rounded-md border border-[var(--gridline)] bg-[var(--surface-1)] px-2 py-1.5 text-sm"
           />
